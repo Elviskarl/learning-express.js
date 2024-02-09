@@ -1,23 +1,23 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 
-//  req => middleware => res
-
-const logger = (req, res, next) => {
-  const method = req.method
-  const url = req.url
-  const time = new Date().getFullYear()
-  console.log(method, url, time)
-  next()
+function sendItems(request,response,next){
+  const method = request.method;
+  const url = request.url;
+  const time = new Date().toLocaleString('US',{weekday: 'long',month: 'long',year:'numeric',day: '2-digit'});
+  request.DetailsOfTime = {method,url,time}
+  next();
 }
 
-app.get('/', logger, (req, res) => {
-  res.send('Home')
-})
-app.get('/about', logger, (req, res) => {
-  res.send('About')
-})
+app.get('/',sendItems,function(request,response){
+  let {method,url,time} = request.DetailsOfTime;
+  console.log(time);  
+  response.send(`Method: ${method} <br>Url: ${url} <br>Time: ${time}`);
+});
+app.get('/about',function(request,response){
+  response.send('About');
+});
 
-app.listen(5000, () => {
-  console.log('Server is listening on port 5000....')
+app.listen(5000,()=>{
+  console.log('Connected to the Database');
 })

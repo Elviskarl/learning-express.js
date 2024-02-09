@@ -1,24 +1,21 @@
-const express = require('express')
-const app = express()
-const logger = require('./logger')
-const authorize = require('./authorize')
-//  req => middleware => res
-app.use([logger, authorize])
-// api/home/about/products
-app.get('/', (req, res) => {
-  res.send('Home')
-})
-app.get('/about', (req, res) => {
-  res.send('About')
-})
-app.get('/api/products', (req, res) => {
-  res.send('Products')
-})
-app.get('/api/items', (req, res) => {
-  console.log(req.user)
-  res.send('Items')
-})
+const sendItems = require('./logger');
+const authorize = require('./authorize');
+const express = require('express');
+const app = express();
 
-app.listen(5000, () => {
-  console.log('Server is listening on port 5000....')
-})
+app.use([sendItems,authorize]);
+app.get('/',function(request,response){
+  let {method,url,time} = request.DetailsOfTime;
+  console.log(time);  
+  response.send(`Method: ${method} <br>Url: ${url} <br>Time: ${time}`);
+});
+app.get('/about',function(request,response){
+  let {method,url,time} = request.DetailsOfTime;
+  console.log(time);  
+  response.send(`Method: ${method} <br>Url: ${url} <br>Time: ${time}`);
+  console.log(request.user);
+});
+
+app.listen(5000,()=>{
+  console.log('Connected to the Database');
+});
